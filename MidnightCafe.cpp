@@ -21,7 +21,7 @@
 
 #define DEBUG
 #define _WIN32_WINNT 0x600
-#define VER "0.0.1"
+#define VER "0.0.2"
 #include <iostream>
 #include <windows.h>
 #include <string>
@@ -36,10 +36,16 @@ using namespace boost;
 DWORD pid_c = 0, pid_g = 0;
 //Stores the image names as a string
 string pim_c = "", pim_g = "";
+
 //Stores the delay amount between checks in force terminate
 DWORD ft_checkDelay = 2000;
 //Tells if the force terminate thread should terminate
 bool ft_threadterminate = false;
+
+//Stores the boolean value for the suspend through debugger, wether this method is running / used
+bool util_s_dbg = false;
+//Stores the last PID that was used by the suspend through debugger command
+DWORD util_s_dbg_pid = 0;
 
 void ft_thread();
 
@@ -68,6 +74,7 @@ int main(int argc, char *argv[]) {
             "\n|      ``   * +----------------------------------+ |"
             "\n+--------------------------------------------------+"
             ;
+
     //Command interpreter
     while (true) {
         cout << "\n>";
@@ -82,7 +89,8 @@ int main(int argc, char *argv[]) {
 
             //Help
             if (_o[0] == "?" || _o[0] == "help") {
-                cout << "\nAvailable commands:"
+                cout <<
+                        "\n\n* Available commands:"
                         "\n? / help                            -- Shows the help dialog and the available commands."
                         "\n\nabout                               -- Shows the About dialog."
                         "\n\nexit                                -- Exits the program."
@@ -92,12 +100,8 @@ int main(int argc, char *argv[]) {
                         "\n\nconfig.show                         -- Show the current configuration"
                         "\n\nutil.forceterminate <delay(ms)>     -- Forces the termination of the application"
                         "\n                                     - Arguments are taken from pim. Delay parameter is optional (default:2000)"
-                        "\n\nutil.discotitle <pid>               -- Continuously randomize the title of a program"
+                        "\n\nutil.suspend.dbg <pid>              -- Suspends the process by debugging it"
                         "\n\ncmd <command>                       -- Allows you to run commands like in a normal command prompt"
-                        "\n\ngpo.accessdrive                     -- Enables access to the external drives"
-                        "\n\ngpo.flashdrive                      -- Enables the USB Ports and Flash drive insertion"
-                        "\n\ngpo.cmd                             -- Enables command prompt"
-                        "\n\ngpo.controlpanel                    -- Enables the control panel"
                         ;
             }
             //About
@@ -170,7 +174,7 @@ int main(int argc, char *argv[]) {
             //Run Commands
             else if (_o[0] == "cmd") {
                 if (_os < 1) {
-                    cout << "!ERROR_@interpreter: Insufficient parameter";
+                    cout << "!ERROR_@interpreter: Parameter error";
                 }
                 else {
                     string fullcom = "";
@@ -180,7 +184,34 @@ int main(int argc, char *argv[]) {
                     system(fullcom.c_str());
                 }
             }
-
+            //Suspend through Debugger
+            else if (_o[0] == "util.suspend.dbg") {
+                if (_os == 1 && !util_s_dbg) {
+                    util_s_dbg_pid = strtol(_o[1].c_str(), 0, 0);
+                    if (DebugActiveProcess(util_s_dbg_pid)) {
+                        cout << "Debugger was successfuly attached to the process!\n\nNote: Terminating this application without deattaching the debugger will cause the debugged program to be terminated as well!\n* To deattach the debugger / disable this command, simply enter the command again without parameters.";
+                        util_s_dbg = true;
+                    }
+                    else {
+                        util_s_dbg_pid = 0;
+                        cout << "!ERROR_@interpretter: Debugger can't be attached";
+                    }
+                }
+                else if (util_s_dbg_pid != 0 && util_s_dbg && _os == 0) {
+                    if (DebugActiveProcessStop(util_s_dbg_pid)) {
+                        cout << "Debugger was successfuly deattached from the process!";
+                        util_s_dbg = false;
+                        util_s_dbg_pid = 0;
+                    }
+                    else {
+                        cout << "!ERROR_@interpretter: Unable to deattach the debugger for the process.";
+                    }
+                }
+                else {
+                    //too lazy to make a bunch of if else statements just for the purpose of verbosity
+                    cout << "!ERROR_@interpreter: Command cannot be executed due to varying reasons.";
+                }
+            }
             //Unknown Command
             else {
                 cout << "!ERROR_@interpreter: Unknown Command. Enter ? or help to see the available commands";
