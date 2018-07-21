@@ -1,4 +1,4 @@
-# MidnightCafe (0.0.1-alpha)
+# MidnightCafe (0.0.2-alpha)
 ```
 +--------------------------------------------------+
 |  *  _.._    +----------------------------------+ |
@@ -18,7 +18,7 @@
 - If you are looking for commands and utility, this is provided by entering ? or help in the console
 
 <br><b>Credits & Developers</b><br>
-- Developed by: TRAGENALPHA • <a href="https://twitter.com/tragenalpha">@tragenalpha</a> • tragenalpha@protonmail.com
+- Developed by: TRAGENALPHA <img src="https://raw.githubusercontent.com/tragenalpha/tragenalpha.github.io/master/flare002.png"/>• <a href="https://twitter.com/tragenalpha">@tragenalpha</a> • tragenalpha@protonmail.com
 - Moon ASCII by: jgs
 
 ## Features
