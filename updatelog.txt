@@ -1,2 +1,7 @@
+0.0.3
+* Added Cafe Manila, Handy Cafe, PanCafe Pro and True Cafe to the config.pim.id
+* Re-configuring now blanks the un-specified parameters
+* Fixed: util.forceterminate only allowing un-assigned configuration
+
 0.0.2
 * Added command "util.suspend.dbg"

@@ -1,4 +1,4 @@
-# MidnightCafe (0.0.1-alpha)
+# MidnightCafe (0.0.3-alpha)
 ```
 +--------------------------------------------------+
 |  *  _.._    +----------------------------------+ |
@@ -22,14 +22,14 @@
 - Moon ASCII by: jgs
 
 ## Features
-- Currently in development, features will be placed if MidnighCafe is atleast ready for beta release.
+- Currently in development, features will be placed if MidnightCafe is atleast ready for beta release.
 
 ## License
 - This software is licensed under the <a href="https://github.com/tragenalpha/midnightcafe/LICENSE">GNU General Public License v3</a>.
 - This software uses Boost's C++ Library which is licensed under the <a href="https://github.com/tragenalpha/midnightcafe/boost_license.txt">BSL v1</a>.
 
 ## Prerequisites
-- This software uses Boost's String library (boost/algorithm/string.hpp). You can acquire Boost <a href="https://www.boost.org/users/download/">here</a>.
+- This software uses Boost C++ library. You can acquire Boost <a href="https://www.boost.org/users/download/">here</a>.
 
 ## Compiling and Releasing
 - This software is compiled using MinGW64 GCC

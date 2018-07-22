@@ -21,7 +21,7 @@
 
 #define DEBUG
 #define _WIN32_WINNT 0x600
-#define VER "0.0.2"
+#define VER "0.0.3"
 #include <iostream>
 #include <windows.h>
 #include <string>
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         }
 
         //Show Terms of Use
-        if (MessageBox(0x00000000L, "DISCLAIMER:\n* The user of this software is fully responsible for the method of usage, The developer cannot be held liable for the consequences that the user ensues due to (but not limited to) mis-use, abuse, malicious intent(s), etc...\n\nTerms of Use:\n* By continuing the use of this software you agree that you will take full responsibility and liability to your actions through this software.\n\nNote:\n* This software is open source and licensed under the GNU v3 General Public License, a copy of the license is required to be distributed with this software.", "Midnight Cafe | Terms of Use", 0x00000001L | 0x00000020L | 0x00000100L) != 1) { return 0; }
+        if (MessageBox(0x00000000L, "DISCLAIMER:\n* The user of this software is fully responsible for the method of usage, The developer cannot be held liable for the consequences that the user ensues due to (but not limited to) mis-use, abuse, malicious intent(s), etc...\n* This software is intended for \"Conceptual\" purposes.\n\nTerms of Use:\n* By continuing the use of this software you agree that you will take full responsibility and liability to your actions through this software.\n\nNote:\n* This software is open source and licensed under the GNU v3 General Public License, a copy of the license is required to be distributed with this software.", "Midnight Cafe | Terms of Use", 0x00000001L | 0x00000020L | 0x00000100L) != 1) { return 0; }
     #endif
 
     //Displays the banner
@@ -91,17 +91,18 @@ int main(int argc, char *argv[]) {
             if (_o[0] == "?" || _o[0] == "help") {
                 cout <<
                         "\n\n* Available commands:"
-                        "\n? / help                            -- Shows the help dialog and the available commands."
-                        "\n\nabout                               -- Shows the About dialog."
-                        "\n\nexit                                -- Exits the program."
-                        "\n\nconfig.pid <client pid> <guard pid> -- Configure the PID values. <guard pid> is optional"
-                        "\n\nconfig.pim <client pim> <guard pim> -- Configure the PIM values. <guard pim> is optional"
-                        "\n\nconfig.pim.id <parameter>           -- Configure the PIM values by known ID's. use ? parameter for help"
-                        "\n\nconfig.show                         -- Show the current configuration"
-                        "\n\nutil.forceterminate <delay(ms)>     -- Forces the termination of the application"
-                        "\n                                     - Arguments are taken from pim. Delay parameter is optional (default:2000)"
-                        "\n\nutil.suspend.dbg <pid>              -- Suspends the process by debugging it"
-                        "\n\ncmd <command>                       -- Allows you to run commands like in a normal command prompt"
+                        "\n? / help                              -- Shows the help dialog and the available commands."
+                        "\n\nabout                                 -- Shows the About dialog."
+                        "\n\nexit                                  -- Exits the program."
+                        "\n\nconfig.pid <client pid> <guard pid>   -- Configure the PID values. <guard pid> is optional"
+                        "\n\nconfig.pim <client pim> <guard pim>   -- Configure the PIM values. <guard pim> is optional"
+                        "\n\nconfig.pim.id <parameter>             -- Configure the PIM values by known ID's. use ? parameter for help"
+                        "\n\nconfig.show                           -- Show the current configuration"
+                        "\n\nutil.forceterminate <delay(ms)>       -- Forces the termination of the application"
+                        "\n                                       - Arguments are taken from pim. Delay parameter is optional (default:2000)"
+                        "\n\nutil.suspend.dbg <pid>                -- Suspends the process by debugging it"
+                        "\n\nutil.suspend.pss <cfgpid|cfgpim> <64> -- Suspends the process using Ps Suspend. First parameter instructs where the target info is located. Parameter <64> is optional, only provide if target is x64."
+                        "\n\ncmd <command>                         -- Allows you to run commands like in a normal command prompt"
                         ;
             }
             //About
@@ -128,6 +129,9 @@ int main(int argc, char *argv[]) {
                     if (_os == 2) {
                         pid_g = strtol(_o[2].c_str(), 0, 0);
                     }
+                    else {
+                        pid_g = 0;
+                    }
                     cout << "config.pid Configured.";
                 }
                 else {
@@ -140,6 +144,9 @@ int main(int argc, char *argv[]) {
                     pim_c = _o[1];
                     if (_os == 2) {
                         pim_g = _o[2];
+                    }
+                    else {
+                        pim_g = "";
                     }
                     cout << "config.pim Configured.";
                 }
@@ -159,7 +166,7 @@ int main(int argc, char *argv[]) {
                 if (_os > 0) {
                     ft_checkDelay = strtol(_o[1].c_str(), 0, 0);
                 }
-                if (pim_c == "" || pim_g == "") {
+                if (pim_c != "" || pim_g != "") {
                     cout << "Force terminate started with " << ft_checkDelay << "ms of delay. Press enter to stop.\n";
                     ft_threadterminate = true;
                     thread ft_thread_h (ft_thread);
@@ -210,6 +217,38 @@ int main(int argc, char *argv[]) {
                 else {
                     //too lazy to make a bunch of if else statements just for the purpose of verbosity
                     cout << "!ERROR_@interpreter: Command cannot be executed due to varying reasons.";
+                }
+            }
+            //Auto Configure PIM
+            else if (_o[0] == "config.pim.id") {
+                if (_os == 1) {
+                    if (_o[1] == "?" || _o[1] == "?") {
+                        cout << "Automatically assign the process image name by referring to an ID. Available assignment ID's :"
+                             << "\nhandycafe, cafemanila, truecafe, pancafepro"
+                        ;
+                    }
+                    else if (_o[1] == "handycafe") {
+                        pim_c = "hndclient.exe";
+                        pim_g = "_hndguard.exe";
+                    }
+                    else if (_o[1] == "cafemanila") {
+                        pim_c = "CafeClient.exe";
+                        pim_g = "";
+                    }
+                    else if (_o[1] == "truecafe") {
+                        pim_c = "TrueCafe.exe";
+                        pim_g = "Client.exe";
+                    }
+                    else if (_o[1] == "pancafepro") {
+                        pim_c = "pncclient.exe";
+                        pim_g = "pguard.exe";
+                    }
+                    else {
+                        cout << "!ERROR_@interpreter: Unknown ID";
+                    }
+                }
+                else {
+                    cout << "!ERROR_@interpreter: Parameter error!";
                 }
             }
             //Unknown Command
